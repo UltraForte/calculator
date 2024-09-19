@@ -153,7 +153,16 @@ funcAdd.addEventListener("click", () => {
 const dotBtn = document.querySelector("btn.dot");
 dotBtn.addEventListener("click", () => {
     checkLength();
-    displayInput.textContent += ".";
+    if (displayInput.textContent.includes(".")) {
+        if (displayInput.textContent.split(operator)[1].includes(".")) {
+            //Do nothing//
+        } else {
+            displayInput.textContent += ".";
+            //Do nothing//
+        };
+    } else {
+        displayInput.textContent += ".";
+    };
 });
 const clearBtn = document.querySelector("btn.clear");
 clearBtn.addEventListener("click", () => {
