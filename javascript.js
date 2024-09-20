@@ -32,22 +32,16 @@ function divide(inputOne, inputTwo) {
     };
 };
 
-
-operator = ("");
+//If else statements turned into ternary ops:
+operator = null;
 function operate(inputOne, inputTwo, operator) {
-    let execution
-    if (operator === "+") {
-        return add(inputOne, inputTwo);
-    } else if (operator === "-") {
-        return subtract(inputOne, inputTwo);
-    } else if (operator === "×") {
-        return multiply(inputOne, inputTwo);
-    } else if (operator === "/") {
-        return divide(inputOne, inputTwo);
-    };
+    return (operator === "+") ? add(inputOne, inputTwo)
+    : (operator === "-") ? subtract(inputOne, inputTwo)
+    : (operator === "×") ? multiply(inputOne, inputTwo)
+    : (operator === "/") ? divide(inputOne, inputTwo);
 };
 
-//Below starts the code to make the display functional:
+//Below starts the code to make the display and buttons functional:
 let displayInput = document.getElementById("displayInput");
 displayInput.textContent = "";
 function checkLength() {
@@ -153,16 +147,15 @@ funcAdd.addEventListener("click", () => {
 const dotBtn = document.querySelector("btn.dot");
 dotBtn.addEventListener("click", () => {
     checkLength();
-    if (displayInput.textContent.includes(".")) {
-        if (displayInput.textContent.split(operator)[1].includes(".")) {
-            //Do nothing//
+        if (displayInput.textContent.includes(".")) {
+            if (displayInput.textContent.split(operator)[1].includes(".")) {
+                //Do nothing//
+            } else {
+                displayInput.textContent += ".";
+            };
         } else {
             displayInput.textContent += ".";
-            //Do nothing//
         };
-    } else {
-        displayInput.textContent += ".";
-    };
 });
 const clearBtn = document.querySelector("btn.clear");
 clearBtn.addEventListener("click", () => {
@@ -170,27 +163,31 @@ clearBtn.addEventListener("click", () => {
 });
 function resetCalc() {
     displayInput.textContent = "";
-    operator = "";
+    operator = null;
     operatorTwo = "";
 };
 
-//Below is the code to get the two values from the input:
-const equalsBtn = document.querySelector("btn.equals");
-equalsBtn.addEventListener("click", () => {
+//Below is the code to get the two values from the input and
+//calculate the result at the bottom: (it's in a funct so that 
+//it can be used when the "Enter" key is pressed):
+function calculate() {
     let displayInputText = (displayInput.textContent);
 
     if (operator === "+" || operator === "-" ||
         operator === "×" || operator === "/") {
-
+            //Do nothing//
         } else {
             resetCalc();
             alert("You didn't enter an operand!");
         };
-    
+        
     //If operatorTwo exists, then:
     if (operatorTwo === "+" || operatorTwo === "-" ||
         operatorTwo === "×" || operatorTwo === "/") {
 
+
+        inputOne = Number(displayInputText.slice(0,-1).split(operator)[0]);
+        inputTwo = Number(displayInputText.slice(0,-1).split(operator)[1]);
         //If lastChar is a number, stop calculation and show alert:
         let lastChar = displayInputText.slice(-1);
         if (lastChar === "+" || lastChar === "-" ||
@@ -200,10 +197,7 @@ equalsBtn.addEventListener("click", () => {
             resetCalc();
             alert("Can't evaluate more than one pair of numbers at a time, but you can end with an operand, like this: \"xx-xx+\"");
         };
-
-        inputOne = Number(displayInputText.slice(0,-1).split(operator)[0]);
-        inputTwo = Number(displayInputText.slice(0,-1).split(operator)[1]);
-        if (inputTwo === 0) {
+        if (inputTwo === 0 && operator === "/") {
             resetCalc();
             let age = prompt("Enter your age:");
             alert("You're telling me you're " + age + " and you don't know that you can't divide by zero? Lol");
@@ -212,7 +206,7 @@ equalsBtn.addEventListener("click", () => {
         //the first operator to the new one. You need to lock in the
         //first operator to keep it from changing. Then change it 
         //to the new operator after the calculation happens.
-        
+            
         let result = operate(inputOne, inputTwo, operator);
         if (operatorTwo === "+") {
             console.log(result);
@@ -238,7 +232,7 @@ equalsBtn.addEventListener("click", () => {
     } else {
         inputOne = Number(displayInputText.split(operator)[0]);
         inputTwo = Number(displayInputText.split(operator)[1]);
-        if (inputTwo === 0) {
+        if (inputTwo === 0 && operator === "/") {
             resetCalc();
             let age = prompt("Enter your age:");
             alert("You're telling me you're " + age + " and you don't know that you can't divide by zero? Lol");
@@ -249,9 +243,82 @@ equalsBtn.addEventListener("click", () => {
         let result = operate(inputOne, inputTwo, operator);
         console.log(result);
         displayInput.textContent = result;
-        
+            
         //Reset operator and operatorTwo;
         operator = "";
         operatorTwo = "";
+    };
+};
+const equalsBtn = document.querySelector("btn.equals");
+equalsBtn.addEventListener("click", () => {
+    calculate();
+});
+
+
+//Keyboard Support:
+document.addEventListener("keydown", function(event){
+    const acceptableChar = "1234567890"
+    if ((acceptableChar).includes(event.key)) {
+    displayInput.textContent += (event.key);
+    };
+    
+    if ((event.key) === "+") {
+        checkLength();
+        displayInput.textContent += "+";
+        if (operator === "+" || operator === "-" ||
+            operator === "×" || operator === "/") {
+                operatorTwo = "+";
+        } else {
+            operator = "+"
+        };
+    };
+    if ((event.key) === "-") {
+        checkLength();
+        displayInput.textContent += "-";
+        if (operator === "+" || operator === "-" ||
+            operator === "×" || operator === "/") {
+                operatorTwo = "-";
+        } else {
+            operator = "-"
+        };
+    };
+    if ((event.key) === "*") {
+        checkLength();
+        displayInput.textContent += "×";
+        if (operator === "+" || operator === "-" ||
+            operator === "×" || operator === "/") {
+                operatorTwo = "×";
+        } else {
+            operator = "×"
+        };
+    };
+    if ((event.key) === "/") {
+        checkLength();
+        displayInput.textContent += "/";
+        if (operator === "+" || operator === "-" ||
+            operator === "×" || operator === "/") {
+                operatorTwo = "/";
+        } else {
+            operator = "/"
+        };
+    };
+    if ((event.key) === "Backspace") {
+        displayInput.textContent = displayInput.textContent.slice(0,-1);
+    };
+    if ((event.key) === "Enter") {
+        calculate();
+    };
+
+    if ((event.key) == ".") {
+        checkLength();
+        if (displayInput.textContent.includes(".")) {
+            if (displayInput.textContent.split(operator)[1].includes(".")) {
+                //Do nothing//
+            } else {
+                displayInput.textContent += ".";
+            };
+        } else {
+            displayInput.textContent += ".";
+        };
     };
 });
