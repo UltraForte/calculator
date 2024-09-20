@@ -38,7 +38,7 @@ function operate(inputOne, inputTwo, operator) {
     return (operator === "+") ? add(inputOne, inputTwo)
     : (operator === "-") ? subtract(inputOne, inputTwo)
     : (operator === "×") ? multiply(inputOne, inputTwo)
-    : (operator === "/") ? divide(inputOne, inputTwo);
+    : divide(inputOne, inputTwo);
 };
 
 //Below starts the code to make the display and buttons functional:
